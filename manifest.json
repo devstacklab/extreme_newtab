@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "EXTREME New Tab",
+  "version": "1.0",
+  "description": "An extreme, beautiful new tab with clock and daily motivation",
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": []
+}

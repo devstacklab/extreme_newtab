@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>New Tab</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grid"></div>
+<div class="scan"></div>
+<div class="ring r1"></div>
+<div class="ring r2"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+<div class="sl"></div>
+<div class="sr"></div>
+<div class="pts" id="pts"></div>
+
+<div class="topbar">
+  <div class="ti"><div class="tdot tc"></div><span>SYS ONLINE</span></div>
+  <div class="ti"><div class="tdot tr2"></div><span id="tbDay">—</span></div>
+  <div class="ti"><div class="tdot ty"></div><span id="tbWeek">—</span></div>
+  <div class="ts"></div>
+  <span class="td" id="tbDate">—</span>
+</div>
+
+<div class="page">
+  <div class="dlabel" id="dlabel">◈ LOADING ◈</div>
+
+  <div class="cwrap">
+    <div class="ctime">
+      <span id="ch">12</span><span class="col">:</span><span id="cm">00</span>
+      <span class="ampm" id="campm">AM</span>
+    </div>
+    <div class="secrow">
+      <span id="cs">00</span><span>SEC</span>
+      <div class="sbt"><div class="sbf" id="sbf"></div></div>
+    </div>
+  </div>
+
+  <div class="div">
+    <div class="dl"></div>
+    <div class="ddi"></div>
+    <div class="dtx">DAILY IGNITION</div>
+    <div class="ddi"></div>
+    <div class="dl"></div>
+  </div>
+
+  <div class="qwrap">
+    <div class="qi">"</div>
+    <div class="qt" id="qt">LOADING FUEL...</div>
+    <div class="qa" id="qa">— SYSTEM</div>
+  </div>
+
+  <button class="rbtn" id="rbtn">⟳ NEXT QUOTE</button>
+
+  <div class="swrap">
+    <div class="sbox">
+      <button class="sibtn" id="sibtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        </svg>
+      </button>
+      <input class="sinput" type="text" id="si" placeholder="SEARCH THE WEB..." autofocus>
+    </div>
+  </div>
+</div>
+
+<div class="botbar">
+  <div class="bi"><span class="bac">◈</span><span id="bpct">DAY 0% DONE</span></div>
+  <div class="bi"><div class="dpt"><div class="dpf" id="dpf"></div></div></div>
+  <div class="bsep"></div>
+  <div class="bi"><span class="bac">◈</span><span>EXTREME NEW TAB</span></div>
+</div>
+
+<script src="newtab.js"></script>
+</body>
+</html>

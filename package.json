@@ -1,0 +1,7 @@
+{
+  "name": "extreme-newtab",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}

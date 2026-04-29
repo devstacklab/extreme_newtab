@@ -26,6 +26,13 @@ const QUICK_LINKS = [
   { label: 'MAPS', url: 'https://maps.google.com/' },
 ];
 
+const {
+  calculateCpuUsage,
+  calculateMemoryUsage,
+  getCpuTotals,
+  normalizeQuickLinks,
+} = window.ExtremeNewTabUtils;
+
 let qi = 0;
 let lastCpuSample = null;
 
@@ -105,18 +112,6 @@ function setMeter(id, value) {
   }
 }
 
-function formatGb(bytes) {
-  return (bytes / (1024 ** 3)).toFixed(1) + ' GB';
-}
-
-function getCpuTotals(info) {
-  return info.processors.reduce(function (acc, processor) {
-    acc.idle += processor.usage.idle;
-    acc.total += processor.usage.total;
-    return acc;
-  }, { idle: 0, total: 0 });
-}
-
 function updateCpuUsage() {
   if (!chrome.system || !chrome.system.cpu || !chrome.system.cpu.getInfo) {
     setStat('cpuUsage', 'N/A');
@@ -135,22 +130,19 @@ function updateCpuUsage() {
       return;
     }
 
-    const totalDelta = current.total - lastCpuSample.total;
-    const idleDelta = current.idle - lastCpuSample.idle;
+    const usage = calculateCpuUsage(lastCpuSample, current);
     lastCpuSample = current;
 
-    if (totalDelta <= 0) {
+    if (usage === null) {
       setStat('cpuUsage', '--%');
       setHudLevel('sidehud-left', 0);
       setMeter('cpuMeter', 0);
       return;
     }
 
-    const usage = Math.round((1 - idleDelta / totalDelta) * 100);
-    const clamped = Math.max(0, Math.min(100, usage));
-    setStat('cpuUsage', String(clamped) + '%');
-    setHudLevel('sidehud-left', clamped);
-    setMeter('cpuMeter', clamped);
+    setStat('cpuUsage', String(usage) + '%');
+    setHudLevel('sidehud-left', usage);
+    setMeter('cpuMeter', usage);
   });
 }
 
@@ -164,13 +156,11 @@ function updateMemoryUsage() {
   }
 
   chrome.system.memory.getInfo(function (info) {
-    const used = info.capacity - info.availableCapacity;
-    const pct = Math.round((used / info.capacity) * 100);
-    const clamped = Math.max(0, Math.min(100, pct));
-    setStat('memoryUsage', String(clamped) + '%');
-    setStat('memoryFree', formatGb(info.availableCapacity));
-    setHudLevel('sidehud-right', clamped);
-    setMeter('memoryMeter', clamped);
+    const memory = calculateMemoryUsage(info);
+    setStat('memoryUsage', String(memory.usedPercentage) + '%');
+    setStat('memoryFree', memory.availableText + ' FREE');
+    setHudLevel('sidehud-right', memory.usedPercentage);
+    setMeter('memoryMeter', memory.usedPercentage);
   });
 }
 
@@ -179,35 +169,6 @@ function startSystemStats() {
   updateMemoryUsage();
   setInterval(updateCpuUsage, 2000);
   setInterval(updateMemoryUsage, 5000);
-}
-
-function normalizeQuickLinks(links) {
-  if (!Array.isArray(links)) return [];
-  return links
-    .filter(function (link) {
-      return link && typeof link.url === 'string';
-    })
-    .map(function (link) {
-      const label = typeof link.label === 'string' && link.label.trim()
-        ? link.label.trim()
-        : deriveLabel(link.url);
-      return {
-        label: label,
-        url: link.url.trim(),
-      };
-    })
-    .filter(function (link) {
-      return link.label && link.url;
-    });
-}
-
-function deriveLabel(url) {
-  try {
-    const host = new URL(url).hostname.replace(/^www\./, '');
-    return host.split('.')[0].toUpperCase();
-  } catch (_error) {
-    return 'LINK';
-  }
 }
 
 function getTopSites() {

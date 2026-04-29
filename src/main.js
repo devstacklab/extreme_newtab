@@ -16,6 +16,16 @@ const QS = [
   { t: "Your only limit is your <span class='hi'>mind</span>.", a: "UNKNOWN" },
 ];
 
+const QUICK_LINKS = [
+  { label: 'GMAIL', url: 'https://mail.google.com/' },
+  { label: 'YOUTUBE', url: 'https://www.youtube.com/' },
+  { label: 'GITHUB', url: 'https://github.com/' },
+  { label: 'CHATGPT', url: 'https://chatgpt.com/' },
+  { label: 'CALENDAR', url: 'https://calendar.google.com/' },
+  { label: 'DRIVE', url: 'https://drive.google.com/' },
+  { label: 'MAPS', url: 'https://maps.google.com/' },
+];
+
 let qi = 0;
 
 function dayQi() {
@@ -75,6 +85,62 @@ function doSearch() {
   if (q) location.href = 'https://www.google.com/search?q=' + encodeURIComponent(q);
 }
 
+function normalizeQuickLinks(links) {
+  if (!Array.isArray(links)) return [];
+  return links
+    .filter(function (link) {
+      return link && typeof link.url === 'string';
+    })
+    .map(function (link) {
+      const label = typeof link.label === 'string' && link.label.trim()
+        ? link.label.trim()
+        : deriveLabel(link.url);
+      return {
+        label: label,
+        url: link.url.trim(),
+      };
+    })
+    .filter(function (link) {
+      return link.label && link.url;
+    });
+}
+
+function deriveLabel(url) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    return host.split('.')[0].toUpperCase();
+  } catch (_error) {
+    return 'LINK';
+  }
+}
+
+function getTopSites() {
+  return new Promise(function (resolve) {
+    if (!chrome.topSites || !chrome.topSites.get) {
+      resolve(QUICK_LINKS);
+      return;
+    }
+
+    chrome.topSites.get(function (sites) {
+      const topSites = normalizeQuickLinks(sites).slice(0, 14);
+      resolve(topSites.length > 0 ? topSites : QUICK_LINKS);
+    });
+  });
+}
+
+function renderQuickLinks(links) {
+  const grid = document.getElementById('linksgrid');
+  grid.textContent = '';
+  links.forEach(function (link) {
+    const a = document.createElement('a');
+    a.className = 'qlink';
+    a.href = link.url;
+    a.textContent = link.label;
+    a.setAttribute('aria-label', link.label);
+    grid.appendChild(a);
+  });
+}
+
 function spawnPts() {
   const c = document.getElementById('pts');
   const cols = ['rgba(0,255,231,', 'rgba(255,0,60,', 'rgba(255,230,0,'];
@@ -103,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
   tick();
   updateInfo();
   spawnPts();
+  getTopSites().then(renderQuickLinks);
 
   setInterval(tick, 1000);
   setInterval(updateInfo, 30000);

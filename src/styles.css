@@ -78,6 +78,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;overflow:hidden
 .sinput{flex:1;border:none;background:transparent;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;letter-spacing:.06em;color:#fff;padding:0 16px;outline:none;height:100%}
 .sinput::placeholder{color:rgba(255,255,255,0.56);font-weight:400}
 
+.linkswrap{width:min(1120px,94vw);margin-top:28px;opacity:0;animation:fu .6s ease 1s forwards}
+.linkshead{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.linksgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;width:100%}
+.qlink{display:flex;align-items:center;justify-content:center;min-height:56px;min-width:0;padding:14px 12px;border:1px solid rgba(0,255,231,0.22);background:linear-gradient(180deg,rgba(0,255,231,0.06),rgba(255,0,60,0.04));color:#fff;text-decoration:none;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:.14em;text-shadow:0 0 12px rgba(255,255,255,0.08);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}
+.qlink:hover,.qlink:focus-visible{transform:translateY(-2px);border-color:rgba(0,255,231,0.55);box-shadow:0 0 18px rgba(0,255,231,0.18),0 0 24px rgba(255,0,60,0.08);background:linear-gradient(180deg,rgba(0,255,231,0.1),rgba(255,0,60,0.08));outline:none}
+
 .botbar{position:fixed;bottom:0;left:0;right:0;height:34px;border-top:1px solid rgba(0,255,231,0.18);background:rgba(12,18,28,0.92);display:flex;align-items:center;padding:0 24px;gap:24px;font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,0.78);text-shadow:0 0 8px rgba(255,255,255,0.08);z-index:20}
 .bi{display:flex;align-items:center;gap:7px}
 .bac{color:var(--c1);text-shadow:0 0 10px rgba(0,255,231,0.22)}
@@ -90,3 +96,15 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;overflow:hidden
 @keyframes fup{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:.4}100%{transform:translateY(-80px) scale(1);opacity:0}}
 
 @keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media (max-width: 700px){
+  .page{justify-content:flex-start;padding:76px 0 70px;overflow:auto}
+  .ampm{right:-42px;bottom:12px;font-size:13px}
+  .linksgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width: 520px){
+  .linksgrid{grid-template-columns:1fr}
+  .qwrap{max-width:92vw;padding:0 20px}
+  .div,.linkswrap{width:min(92vw,560px)}
+}

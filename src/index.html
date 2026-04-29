@@ -12,6 +12,8 @@
 <div class="scan"></div>
 <div class="ring r1"></div>
 <div class="ring r2"></div>
+<div class="aurora a1"></div>
+<div class="aurora a2"></div>
 <div class="corner tl"></div>
 <div class="corner tr"></div>
 <div class="corner bl"></div>
@@ -80,6 +82,39 @@
     <div class="linksgrid" id="linksgrid"></div>
   </section>
 </div>
+
+<aside class="sidehud sidehud-left" aria-labelledby="cpu-panel-title">
+  <div class="hudring"></div>
+  <div class="hudring hudring-b"></div>
+  <div class="hudscan"></div>
+  <div class="panelhead">
+    <div class="panelline"></div>
+    <div class="ddi"></div>
+    <div class="dtx" id="cpu-panel-title">CPU STATUS</div>
+  </div>
+  <div class="hudcard">
+    <span class="statlabel">CPU</span>
+    <span class="statvalue" id="cpuUsage">--%</span>
+    <div class="hudmeter"><div class="hudmeterfill" id="cpuMeter"></div></div>
+  </div>
+</aside>
+
+<aside class="sidehud sidehud-right" aria-labelledby="memory-panel-title">
+  <div class="hudring"></div>
+  <div class="hudring hudring-b"></div>
+  <div class="hudscan"></div>
+  <div class="panelhead">
+    <div class="ddi"></div>
+    <div class="dtx" id="memory-panel-title">MEMORY STATUS</div>
+    <div class="panelline"></div>
+  </div>
+  <div class="hudcard">
+    <span class="statlabel">MEMORY</span>
+    <span class="statvalue" id="memoryUsage">--%</span>
+    <div class="hudmeter"><div class="hudmeterfill" id="memoryMeter"></div></div>
+    <span class="statsub" id="memoryFree">-- GB FREE</span>
+  </div>
+</aside>
 
 <div class="botbar">
   <div class="bi"><span class="bac">◈</span><span id="bpct">DAY 0% DONE</span></div>

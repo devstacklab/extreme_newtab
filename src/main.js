@@ -27,6 +27,7 @@ const QUICK_LINKS = [
 ];
 
 let qi = 0;
+let lastCpuSample = null;
 
 function dayQi() {
   const n = new Date();
@@ -83,6 +84,101 @@ function updateInfo() {
 function doSearch() {
   const q = document.getElementById('si').value.trim();
   if (q) location.href = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+}
+
+function setStat(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setHudLevel(sideClass, value) {
+  const panel = document.querySelector('.' + sideClass);
+  if (panel) {
+    panel.style.setProperty('--hud-level', String(value));
+  }
+}
+
+function setMeter(id, value) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.width = String(value) + '%';
+  }
+}
+
+function formatGb(bytes) {
+  return (bytes / (1024 ** 3)).toFixed(1) + ' GB';
+}
+
+function getCpuTotals(info) {
+  return info.processors.reduce(function (acc, processor) {
+    acc.idle += processor.usage.idle;
+    acc.total += processor.usage.total;
+    return acc;
+  }, { idle: 0, total: 0 });
+}
+
+function updateCpuUsage() {
+  if (!chrome.system || !chrome.system.cpu || !chrome.system.cpu.getInfo) {
+    setStat('cpuUsage', 'N/A');
+    setHudLevel('sidehud-left', 0);
+    setMeter('cpuMeter', 0);
+    return;
+  }
+
+  chrome.system.cpu.getInfo(function (info) {
+    const current = getCpuTotals(info);
+    if (!lastCpuSample) {
+      lastCpuSample = current;
+      setStat('cpuUsage', '--%');
+      setHudLevel('sidehud-left', 0);
+      setMeter('cpuMeter', 0);
+      return;
+    }
+
+    const totalDelta = current.total - lastCpuSample.total;
+    const idleDelta = current.idle - lastCpuSample.idle;
+    lastCpuSample = current;
+
+    if (totalDelta <= 0) {
+      setStat('cpuUsage', '--%');
+      setHudLevel('sidehud-left', 0);
+      setMeter('cpuMeter', 0);
+      return;
+    }
+
+    const usage = Math.round((1 - idleDelta / totalDelta) * 100);
+    const clamped = Math.max(0, Math.min(100, usage));
+    setStat('cpuUsage', String(clamped) + '%');
+    setHudLevel('sidehud-left', clamped);
+    setMeter('cpuMeter', clamped);
+  });
+}
+
+function updateMemoryUsage() {
+  if (!chrome.system || !chrome.system.memory || !chrome.system.memory.getInfo) {
+    setStat('memoryUsage', 'N/A');
+    setStat('memoryFree', 'N/A');
+    setHudLevel('sidehud-right', 0);
+    setMeter('memoryMeter', 0);
+    return;
+  }
+
+  chrome.system.memory.getInfo(function (info) {
+    const used = info.capacity - info.availableCapacity;
+    const pct = Math.round((used / info.capacity) * 100);
+    const clamped = Math.max(0, Math.min(100, pct));
+    setStat('memoryUsage', String(clamped) + '%');
+    setStat('memoryFree', formatGb(info.availableCapacity));
+    setHudLevel('sidehud-right', clamped);
+    setMeter('memoryMeter', clamped);
+  });
+}
+
+function startSystemStats() {
+  updateCpuUsage();
+  updateMemoryUsage();
+  setInterval(updateCpuUsage, 2000);
+  setInterval(updateMemoryUsage, 5000);
 }
 
 function normalizeQuickLinks(links) {
@@ -169,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
   tick();
   updateInfo();
   spawnPts();
+  startSystemStats();
   getTopSites().then(renderQuickLinks);
 
   setInterval(tick, 1000);
